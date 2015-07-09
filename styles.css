@@ -1,0 +1,30 @@
+body {
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+	background-size: cover;
+	background-color: #092B40;
+}
+
+.search-div {
+	text-align: center;
+}
+
+.search-icon {
+	color: #D96F32;
+	font-size: 3em;
+}
+
+.icon-text {
+	font-family: Arial, Helvetica, sans-serif;
+	color: white;
+}
+
+table {
+    border-collapse: collapse;
+    background-color: white;
+}
+
+th, td {
+    border: 1px solid black;
+}
