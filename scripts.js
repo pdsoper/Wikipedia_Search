@@ -2,29 +2,35 @@
 
 $(document).ready(function() {
 
-  getNews();
+  getWikipedia('Delaware');
 
-  function getNews() {
+// My API (POST https://en.wikipedia.org/w/api.php)
+
+  function getWikipedia(searchStr) {
     $.ajax({
-        url: "http://www.freecodecamp.com/stories/hotStories",
-        type: "GET",
+      url: "https://en.wikipedia.org/w/api.php?" + jQuery.param({
+          "action": "query",
+          "list": "search",
+          "srsearch": searchStr,
+          "srlimit": "10",
+          "format": "json",
+          "continue": "",
+      }),
+      dataType: "jsonp",
+      type: "POST",
     })
     .done(function(data, textStatus, jqXHR) {
-      console.log("HTTP Request Succeeded: " + jqXHR.status);
-      console.log(data);
-      $('#json').append(makeJSONTable(data, "Results of FCC news query"));
-      var divStr = data
-      .map(function(a) { return writeDiv(a); })
-      .reduce(function(a,b) { return a + b; });
-      $('.grid').append(divStr);
+        console.log("HTTP Request Succeeded: " + jqXHR.status);
+        console.log(data);
+        $('#json').append(makeJSONTable(data, "Results of Wikipedia search"));
     })
     .fail(function(jqXHR, textStatus, errorThrown) {
-      console.log("HTTP Request Failed");
-      console.log(jqXHR);
-      console.log(errorThrown);
+        console.log("HTTP Request Failed");
+        console.log(jqXHR);
+        console.log(errorThrown);
     })
     .always(function() {
-      //data|jqXHR, textStatus, jqXHR|errorThrown
+        /* ... */
     });
   }
 
