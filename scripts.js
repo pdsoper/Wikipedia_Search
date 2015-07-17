@@ -13,14 +13,13 @@ $(document).ready(function() {
   function transitionToSearch() {
     /* Replace the magnifier with a round text box, stretch the box to its
     final length, add the x to clear the box, and add the autocompete checkbox
-    */
+    The example includes a funky animation for the x (clear) */
   }
 
   function transitionToStart() {
     /*  If the x in the search box is pressed, remove the automcomplete option,
     clear the box, remove the x, shrink the box to a circle, then replace it by
-    the magnifying glass
-    */
+    the magnifying glass.  The example includes a funky animation for the x \(clear) */
   }
 
   /* ajax calls */
