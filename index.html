@@ -24,13 +24,16 @@
 	<body>
 
 		<div class="search-div">
+			<div class="search-handle"></div>
+			<button id="clear">x</button>
 			<form>
-				<input type=text id="search" class="text-thing text-circle" />
-				<div class="search-handle"></div>
-				<button id="clear">x</button>
-				<br />
-				<input type=checkbox id="auto" checked>Use autocomplete</input>
-		</form>
+				<div class="text-thing text-circle">
+					<input type=text id="search" class="search-box" />
+				</div>
+				<div class="check-div">
+					<input type=checkbox class="auto-check" id="auto-check" checked>Use autocomplete</input>
+				</div>
+			</form>
 		</div>
 
 		<div class="start-div">

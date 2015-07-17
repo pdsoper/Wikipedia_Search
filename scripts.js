@@ -11,15 +11,23 @@ $(document).ready(function() {
   $( '.random-entry' ).click(function() { wikiRandom(); });
 
   function transitionToSearch() {
-    /* Replace the magnifier with a round text box, stretch the box to its
-    final length, add the x to clear the box, and add the autocompete checkbox
-    The example includes a funky animation for the x (clear) */
+    /* Remove the random page option
+    Remove the handle of the magnifyng glass (visiblity)
+    Replace the magnifier with a round text box
+    Sstretch the box to its final length
+    Add the x used to clear the box
+    Move the focus to the search box.
+    Add the autocompete checkbox
+    The example includes a funky animation for the x */
   }
 
   function transitionToStart() {
-    /*  If the x in the search box is pressed, remove the automcomplete option,
-    clear the box, remove the x, shrink the box to a circle, then replace it by
-    the magnifying glass.  The example includes a funky animation for the x \(clear) */
+    /*  Remove the automcomplete option,
+    Clear and hide the search box
+    Hide and disable the x
+    Shrink the text-thing to a circle
+    Show the handle of the magnifying glass
+    The example includes a funky animation for the x \(clear) */
   }
 
   /* ajax calls */
