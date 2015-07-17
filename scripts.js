@@ -7,18 +7,26 @@ $(document).ready(function() {
   // getAutoComplete('Dela');
   // wikiRandom();
 
-  $( '#icon-div' ).click(function() { transitionToSearch(); });
+  $( '.text-thing' ).click(function() { transitionToSearch(); });
   $( '.random-entry' ).click(function() { wikiRandom(); });
+  $( '.clear' ).click(function() { transitionToStart(); });
+
 
   function transitionToSearch() {
     /* Remove the random page option
     Remove the handle of the magnifyng glass (visiblity)
-    Replace the magnifier with a round text box
-    Sstretch the box to its final length
+    Stretch the box to its final length
     Add the x used to clear the box
     Move the focus to the search box.
     Add the autocompete checkbox
     The example includes a funky animation for the x */
+    $( '.start-div' ).removeClass('shown').addClass('hidden');
+    $( '.search-handle' ).removeClass('shown').addClass('hidden');
+    $( '.text-thing' ).animate( { width: 300 }, 500, function() {
+      $( '.clear' ).removeClass('hidden').addClass('shown');
+      $( '.check-div' ).removeClass('disp-none').addClass('disp-block');
+      $( '.search-box' ).removeClass('hidden').addClass('shown').focus();
+    });
   }
 
   function transitionToStart() {
@@ -28,6 +36,13 @@ $(document).ready(function() {
     Shrink the text-thing to a circle
     Show the handle of the magnifying glass
     The example includes a funky animation for the x \(clear) */
+    $( '.search-box' ).removeClass('shown').addClass('hidden');
+    $( '.check-div' ).removeClass('disp-block').addClass('disp-none');
+    $( '.clear' ).removeClass('shown').addClass('hidden');
+    $( '.text-thing' ).animate( { width: 40 }, 1500, function() {
+      //$( '.search-handle' ).removeClass('hidden').addClass('shown');
+      //$( '.start-div' ).removeClass('hidden').addClass('shown');
+    });
   }
 
   /* ajax calls */

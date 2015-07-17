@@ -6,6 +6,12 @@ body {
 	background-color: #092B40;
 }
 
+/*
+div {
+	border: 1px solid white;
+}
+*/
+
 .search-div {
 	text-align: center;
 }
@@ -15,14 +21,15 @@ body {
 	height: 0;
 	border-bottom: 4px solid #D96F32;
 	position: relative;
-	margin: auto;/*	-ms-transform:rotate(45deg) translateX(1px) translateY(0px);
-	-webkit-transform: rotate(45deg) translateX(15px) translateY(0px); */
-	transform: translateX(17px)  translateY(72px) rotate(45deg) ;
+	margin: auto;
+	    -ms-transform: translateX(17px) translateY(0px) rotate(45deg);
+	-webkit-transform: translateX(17px) translateY(0px) rotate(45deg);
+	        transform: translateX(17px) translateY(0px) rotate(45deg);
 }
 
-#clear {
+.clear {
 	position: relative;
-	top: 34px;
+	top: -37px;
 	left: 130px;
 	border: 1px solid transparent;
 	border-radius: 15px;
@@ -32,6 +39,7 @@ body {
 	font-weight: bold;
 	font-size: 1.4em;
 	visibility: hidden;
+	z-index: 1;
 }
 
 .text-thing {
@@ -64,14 +72,14 @@ body {
 	position: relative;
 	left: -10px;
 	border: 0;
-	background-color: white;
+	background-color: transparent;
 	color: white;
-	display: none;
+	visibility: hidden;
 }
 
 .check-div {
 	color: white;
-	visibility: hidden;
+	display: none;
 }
 
 .auto-check {
@@ -95,6 +103,32 @@ body {
 	padding: 5px 10px 5px 10px;
 	border: 1px solid gray;
 	border-radius: 10px;
+}
+
+.hidden {
+	visibility: hidden;
+}
+
+.shown {
+	visibility: visible;
+}
+
+.disp-none {
+	display: none;
+}
+
+.disp-block {
+	display: block;
+}
+
+.widen {
+	width: 300px;
+	transition: width 1s linear;
+}
+
+.narrow {
+	width: 40px;
+	transition: width 1s linear;
 }
 
 /* Used only for the JSON tables */
