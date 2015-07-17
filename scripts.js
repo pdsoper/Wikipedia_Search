@@ -9,8 +9,15 @@ $(document).ready(function() {
 
   $( '.text-thing' ).click(function() { transitionToSearch(); });
   $( '.random-entry' ).click(function() { wikiRandom(); });
-  $( '.clear' ).click(function() { transitionToStart(); });
-
+  $( '.x-clear' ).click(function() { transitionToStart(); });
+  $( '.search-box' ).submit(function() {
+    var val = $( '.search-box' ).val();
+    if ($( '.auto-check').checked()) {
+      /// process auto completion
+    } else {
+      searchWikipedia(val);
+    }
+  });
 
   function transitionToSearch() {
     /* Remove the random page option
@@ -23,10 +30,10 @@ $(document).ready(function() {
     $( '.start-div' ).removeClass('shown').addClass('hidden');
     $( '.search-handle' ).removeClass('shown').addClass('hidden');
     $( '.text-thing' ).animate( { width: 300 }, 500, function() {
-      $( '.clear' ).removeClass('hidden').addClass('shown');
+      $( '.x-clear' ).removeClass('hidden').addClass('shown');
       $( '.check-div' ).removeClass('disp-none').addClass('disp-block');
       $( '.search-box' ).removeClass('hidden').addClass('shown').focus();
-    });
+   });
   }
 
   function transitionToStart() {
@@ -36,12 +43,13 @@ $(document).ready(function() {
     Shrink the text-thing to a circle
     Show the handle of the magnifying glass
     The example includes a funky animation for the x \(clear) */
+    $( '.serch-box' ).val('');
     $( '.search-box' ).removeClass('shown').addClass('hidden');
     $( '.check-div' ).removeClass('disp-block').addClass('disp-none');
-    $( '.clear' ).removeClass('shown').addClass('hidden');
-    $( '.text-thing' ).animate( { width: 40 }, 1500, function() {
-      //$( '.search-handle' ).removeClass('hidden').addClass('shown');
-      //$( '.start-div' ).removeClass('hidden').addClass('shown');
+    $( '.x-clear' ).removeClass('shown').addClass('hidden');
+    $( '.text-thing' ).animate( { width: 40 }, 500, function() {
+      $( '.search-handle' ).removeClass('hidden').addClass('shown');
+      $( '.start-div' ).removeClass('hidden').addClass('shown');
     });
   }
 
@@ -169,7 +177,6 @@ $(document).ready(function() {
         /* ... */
     });
   }
-
 
   function getAutoComplete(searchStr) {
     /* See https://www.mediawiki.org/wiki/API:Opensearch */
