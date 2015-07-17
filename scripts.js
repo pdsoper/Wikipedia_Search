@@ -34,31 +34,69 @@ $(document).ready(function() {
     });
   }
 
+  function getAutoComplete(searcgStr) {
+    // Per http://www.labnol.org/internet/tools/using-wikipedia-api-demo-source-code-example/3076/
+    // The actual documentation is at https://www.mediawiki.org/wiki/API:Opensearch
+    $.ajax({
+      url: "https://en.wikipedia.org/w/api.php?" + jQuery.param({
+          "action": "opensearch",
+          "search": searchStr,
+          "limit": 5,
+          "redirects": "return",
+          "format": "json",
+          "warningsaserror": false,
+      }),
+      dataType: "jsonp",
+      type: "POST",
+    })
+    .done(function(data, textStatus, jqXHR) {
+        console.log("HTTP Request Succeeded: " + jqXHR.status);
+        console.log(data);
+        $('#json').append(makeJSONTable(data, "Results of Wikipedia search"));
+    })
+    .fail(function(jqXHR, textStatus, errorThrown) {
+        console.log("HTTP Request Failed");
+        console.log(jqXHR);
+        console.log(errorThrown);
+    })
+    .always(function() {
+        /* ... */
+    });
+
+  }
+
   function makeJSONTable(obj, heading) {
-    // This creates a nested table of JSON data. Use Bootstrap, if available.  If not, use css
-    var bootstrap_enabled = (typeof $().modal == 'function');
-    if (!bootstrap_enabled) {
-      $('table').css("border-collapse", "collapse");
-      $('th, td').css("border", "1px solid black");
-    }
+    /* This returns HTML for a nested table of JSON data. 
+    Use Bootstrap, if available.  If not, use css */
+    var bootstrap_enabled = (typeof $().modal === 'function');
     var tableBody = "";
     if (heading !== undefined) {
-      tableBody += '<h4>' + heading + '</h4>';
+      tableBody += '<h4 style="background-color:white;color:black">' + heading + '</h4>';
     }
-    tableBody += '<table class="table table-striped table-bordered">\n';
+    if (obj === null) {
+      return tableBody;
+    }
+    if (bootstrap_enabled) {
+      tableBody += '<table class="table table-striped table-bordered">\n<tbody>\n';
+    } else {
+      tableBody += '<table style="background-color:white;color:black;border-collapse:collapse">\n';
+    }
     $.each(obj, function(k, v) {
-      tableBody += "<tr><td>" + k + "</td><td>";
+      if (bootstrap_enabled) {
+        tableBody += '<tr><td>' + k + '</td><td>';
+      } else {
+        tableBody += '<tr style="background-color:white;color:black;border:1px solid black">'
+                  +  '<td style="background-color:white;color:black;border:1px solid black">' 
+                  + k + '</td><td>';
+      }
       if (typeof v !== "object") {
         tableBody += v;
       } else {
         tableBody += makeJSONTable(v);
       }
     });
-    tableBody += '</td></tr></table>';
+    tableBody += '</td></tr>\n</tbody>\n</table>';
     return tableBody; 
   }
-
-
-
 
 });

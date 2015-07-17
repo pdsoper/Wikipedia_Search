@@ -3,7 +3,7 @@ body {
 	background-repeat: no-repeat;
 	background-attachment: fixed;
 	background-size: cover;
-	background-color: #092B40;
+/* 	background-color: #092B40; */
 }
 
 .search-div {
@@ -29,13 +29,4 @@ body {
 	padding: 5px 10px 5px 10px;
 	border: 1px solid gray;
 	border-radius: 10px;
-}
-
-table {
-    border-collapse: collapse;
-    background-color: white;
-}
-
-th, td {
-    border: 1px solid black;
 }
