@@ -2,12 +2,58 @@
 
 $(document).ready(function() {
 
-  getWikipedia('Delaware');
-  getAutoComplete('Dela');
+  // searchWikipedia('Delaware');
   // getPage('Delaware');
+  // getAutoComplete('Dela');
+  // wikiRandom();
 
+  $( '#icon-div' ).click(function() { transitionToSearch(); });
+  $( '.random-entry' ).click(function() { wikiRandom(); });
 
-  function getWikipedia(searchStr) {
+  function transitionToSearch() {
+    /* Replace the magnifier with a round text box, stretch the box to its
+    final length, add the x to clear the box, and add the autocompete checkbox
+    */
+  }
+
+  function transitionToStart() {
+    /*  If the x in the search box is pressed, remove the automcomplete option,
+    clear the box, remove the x, shrink the box to a circle, then replace it by
+    the magnifying glass
+    */
+  }
+
+  /* ajax calls */
+
+  function wikiRandom() {
+    $.ajax({
+      url: "https://en.wikipedia.org/w/api.php?" + jQuery.param({
+          "action": "query",
+          "list": "random",
+          "rnnamespace": 0,
+          "rnlimit": 1,
+          "format": "json",
+      }),
+      dataType: "jsonp",
+      type: "POST",
+    })
+    .done(function(data, textStatus, jqXHR) {
+        console.log("HTTP Request Succeeded: " + jqXHR.status);
+        console.log(data);
+        // $('#json').append(makeJSONTable(data, "Results of Wikipedia random page"));
+        openPage(data.query.random[0].id);
+    })
+    .fail(function(jqXHR, textStatus, errorThrown) {
+        console.log("HTTP Request Failed");
+        console.log(jqXHR);
+        console.log(errorThrown);
+    })
+    .always(function() {
+        /* ... */
+    });
+  }
+
+  function searchWikipedia(searchStr) {
     $.ajax({
       url: "https://en.wikipedia.org/w/api.php?" + jQuery.param({
           "action": "query",
@@ -23,7 +69,7 @@ $(document).ready(function() {
     .done(function(data, textStatus, jqXHR) {
         console.log("HTTP Request Succeeded: " + jqXHR.status);
         console.log(data);
-        $('#json').append(makeJSONTable(data, "Results of Wikipedia search"));
+        // $('#json').append(makeJSONTable(data, "Results of Wikipedia search"));
     })
     .fail(function(jqXHR, textStatus, errorThrown) {
         console.log("HTTP Request Failed");
@@ -35,7 +81,6 @@ $(document).ready(function() {
     });
   }
 
-// /w/api.php?action=query&list=pageswithprop&format=json&pwppropname=Delaware&pwpprop=title&pwplimit=10&pwpdir=ascending&indexpageids=&titles=Delaware
   function getPage(title) {
     $.ajax({
       url: "https://en.wikipedia.org/w/api.php?" + jQuery.param({
@@ -60,7 +105,7 @@ $(document).ready(function() {
         if (data.query.pageids.length > 0) {
           openPage(data.query.pageids[0]);
         }
-        $('#json').append(makeJSONTable(data, "Results of getPage"));
+        // $('#json').append(makeJSONTable(data, "Results of getPage"));
     })
     .fail(function(jqXHR, textStatus, errorThrown) {
         console.log("HTTP Request Failed");
@@ -73,7 +118,7 @@ $(document).ready(function() {
 
   }
 
-function openPage(pageid) {
+  function openPage(pageid) {
    $.ajax({
       url: "https://en.wikipedia.org/w/api.php?" + jQuery.param({
           "action": "query",
@@ -88,7 +133,7 @@ function openPage(pageid) {
     .done(function(data, textStatus, jqXHR) {
         console.log("HTTP Request Succeeded: " + jqXHR.status);
         console.log(data);
-        $('#json').append(makeJSONTable(data, "Results of openPage"));
+        // $('#json').append(makeJSONTable(data, "Results of openPage"));
         var url = data.query.pages[pageid].canonicalurl
         console.log(url);
         window.open(url);
@@ -119,7 +164,7 @@ function openPage(pageid) {
     .done(function(data, textStatus, jqXHR) {
         console.log("HTTP Request Succeeded: " + jqXHR.status);
         console.log(data);
-        $('#json').append(makeJSONTable(data, "Results of opensearch"));
+        // $('#json').append(makeJSONTable(data, "Results of opensearch"));
 
         /* Retuned value is an array.  All but the first element are arrays
         data[0] = search string
@@ -139,13 +184,15 @@ function openPage(pageid) {
 
   }
 
+  /* Utility functions */
+
   function makeJSONTable(obj, heading) {
     /* This returns HTML for a nested table of JSON data.
     Use Bootstrap, if available.  If not, use css */
     var bootstrap_enabled = (typeof $().modal === 'function');
     var tableBody = "";
     if (heading !== undefined) {
-      tableBody += '<h4 style="background-color:white;color:black">' + heading + '</h4>';
+      tableBody += '<h4 style="background-color:#e0ffe0;color:black;margin:0">' + heading + '</h4>';
     }
     if (obj === null) {
       return tableBody;

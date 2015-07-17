@@ -3,11 +3,19 @@ body {
 	background-repeat: no-repeat;
 	background-attachment: fixed;
 	background-size: cover;
-/* 	background-color: #092B40; */
+	background-color: #092B40;
 }
 
 .search-div {
 	text-align: center;
+}
+
+.start-div {
+	text-align: center;
+}
+
+.search-icon:hover {
+	cursor: pointer;
 }
 
 .search-icon {
