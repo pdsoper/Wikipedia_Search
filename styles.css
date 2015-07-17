@@ -30,3 +30,8 @@ body {
 	border: 1px solid gray;
 	border-radius: 10px;
 }
+
+.table-striped>tbody>tr:nth-child(even)>td,
+.table-striped>tbody>tr:nth-child(even)>th {
+   background-color: #e0ffe0;
+ }

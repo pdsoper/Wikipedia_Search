@@ -2,10 +2,10 @@
 
 $(document).ready(function() {
 
-  getPage('Delaware');
-  // openPage('7930');
+  getWikipedia('Delaware');
+  getAutoComplete('Dela');
+  // getPage('Delaware');
 
-// My API (POST https://en.wikipedia.org/w/api.php)
 
   function getWikipedia(searchStr) {
     $.ajax({
@@ -88,7 +88,7 @@ function openPage(pageid) {
     .done(function(data, textStatus, jqXHR) {
         console.log("HTTP Request Succeeded: " + jqXHR.status);
         console.log(data);
-        $('#json').append(makeJSONTable(data, "Results of oepnPage"));
+        $('#json').append(makeJSONTable(data, "Results of openPage"));
         var url = data.query.pages[pageid].canonicalurl
         console.log(url);
         window.open(url);
@@ -104,17 +104,14 @@ function openPage(pageid) {
   }
 
 
-  function getAutoComplete(searcgStr) {
-    // Per http://www.labnol.org/internet/tools/using-wikipedia-api-demo-source-code-example/3076/
-    // The actual documentation is at https://www.mediawiki.org/wiki/API:Opensearch
+  function getAutoComplete(searchStr) {
+    /* See https://www.mediawiki.org/wiki/API:Opensearch */
     $.ajax({
       url: "https://en.wikipedia.org/w/api.php?" + jQuery.param({
           "action": "opensearch",
           "search": searchStr,
           "limit": 5,
-          "redirects": "return",
           "format": "json",
-          "warningsaserror": false,
       }),
       dataType: "jsonp",
       type: "POST",
@@ -122,7 +119,14 @@ function openPage(pageid) {
     .done(function(data, textStatus, jqXHR) {
         console.log("HTTP Request Succeeded: " + jqXHR.status);
         console.log(data);
-        $('#json').append(makeJSONTable(data, "Results of Wikipedia search"));
+        $('#json').append(makeJSONTable(data, "Results of opensearch"));
+
+        /* Retuned value is an array.  All but the first element are arrays
+        data[0] = search string
+        data[1][i] = autocompletion
+        data[2][i] = snippet
+        data[3][i] = canonical url
+        */
     })
     .fail(function(jqXHR, textStatus, errorThrown) {
         console.log("HTTP Request Failed");
