@@ -7,6 +7,8 @@ $(document).ready(function() {
     // getAutoComplete('Dela');
     // wikiRandom();
 
+    $( '.auto-check' ).prop('checked', false);
+
     $( '.text-thing' ).click(function() { transitionToSearch(); });
     $( '.random-entry' ).click(function() { wikiRandom(); });
     $( '.x-clear' ).click(function() { transitionToStart(); });
@@ -26,28 +28,29 @@ $(document).ready(function() {
           getPage( $(this).attr('id'));
     });
 
-    $( '.results-div' ).on('submit', '.search-result', function(event) {
-        if ( event.which === 13 ) {
-            var val = $( '.search-box' ).val();
-            if (val.length === 0 ) {
-                return;
-            }
-            searchWikipedia(val);
-        }
-    })
-
     $( '.search-box' ).keypress(function(event) {
         if ( event.which === 13 ) {
             var val = $( '.search-box' ).val();
             if (val.length === 0 ) {
                 return;
+            } else {
+                searchWikipedia(val);
             }
-            searchWikipedia(val);
         }
-        if ($( '.auto-check' ).checked()) {
-           /// process auto completion
-        } else {
-           searchWikipedia(val);
+    });
+
+    $( "#autocomplete" ).autocomplete({
+        source: function( request, response ) {
+            response( getAutoComplete(request.term) );
+        }
+    });
+
+    $( '#autocomplete' ).keyup(function(event) {
+        if ($( '.auto-check' ).prop('checked')) {
+            var val = $( '#autocomplete ' ).val();
+            if (val.length >= 2) {
+                console.log(getAutoComplete(val));
+            }
         }
     });
 
@@ -214,7 +217,7 @@ $(document).ready(function() {
           url: "https://en.wikipedia.org/w/api.php?" + jQuery.param({
               "action": "opensearch",
               "search": searchStr,
-              "limit": 5,
+              "limit": 7,
               "format": "json",
           }),
           dataType: "jsonp",
@@ -223,14 +226,13 @@ $(document).ready(function() {
         .done(function(data, textStatus, jqXHR) {
             console.log("HTTP Request Succeeded: " + jqXHR.status);
             console.log(data);
-            // $('#json').append(makeJSONTable(data, "Results of opensearch"));
-
-            /* Retuned value is an array.  All but the first element are arrays
+            /* An array. is returned  All but the first element are arrays
             data[0] = search string
             data[1][i] = autocompletion
             data[2][i] = snippet
             data[3][i] = canonical url
             */
+            return [data[1], data[3]];
         })
         .fail(function(jqXHR, textStatus, errorThrown) {
             console.log("HTTP Request Failed");
