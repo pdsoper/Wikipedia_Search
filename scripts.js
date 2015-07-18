@@ -7,20 +7,15 @@ $(document).ready(function() {
     // getAutoComplete('Dela');
     // wikiRandom();
 
-    $( '#search-form' ).submit(function(event) {
-        var val = $( '.search-box' ).val();
-        if (val.length === 0 ) {
-            return;
-        } else {
-            $( ".search-box" ).autocomplete( 'close' );
-            searchWikipedia(val);
-        }
-    });
+    /* Event handlers */
 
     $( ".search-box" ).autocomplete({
         delay: 300,
         diabled: false,
         minLength: 2,
+        select: function(event, ui) {
+            searchWikipedia(ui.item.label);
+        },
         source: function( request, response ) {
             $.ajax({
                 /* See https://www.mediawiki.org/wiki/API:Opensearch */
@@ -53,7 +48,15 @@ $(document).ready(function() {
         }
     });
 
-    /* Event handlers */
+    $( '#search-form' ).submit(function(event) {
+        var val = $( '.search-box' ).val();
+        if (val.length === 0 ) {
+            return;
+        } else {
+            $( ".search-box" ).autocomplete( 'close' );
+            searchWikipedia(val);
+        }
+    });
 
     $( '.text-thing' ).click(function() { transitionToSearch(); });
     $( '.random-entry' ).click(function() { wikiRandom(); });
@@ -89,6 +92,7 @@ $(document).ready(function() {
 
     function transitionToStart() {
         /*  The example includes a funky animation for the x */
+        $( '.search-box' ).autocomplete( 'close' );
         $( '.results-div' ).html('');
         $( '.top-space' ).removeClass('short-top').addClass('tall-top');
         $( '.search-box' ).val('');
@@ -119,7 +123,7 @@ $(document).ready(function() {
     /* ajax calls */
 
     function searchWikipedia(searchStr) {
-        /* Perform the search, return at most 10 results, and call writeDivs to display them */
+        /* Perform the search, return the results, and call writeDiv to display them */
         $.ajax({
             url: "https://en.wikipedia.org/w/api.php?" + jQuery.param({
                 "action": "query",
@@ -252,45 +256,6 @@ $(document).ready(function() {
 
     function stripHtml(str) {
       return $('<div/>').html(str).text();
-    }
-
-    function makeJSONTable(obj, heading) {
-      /* This returns HTML for a nested table of JSON data.
-      Use Bootstrap, if available.  If not, use css */
-      var bootstrap_enabled = (typeof $().modal === 'function');
-      var tableBody = "";
-      var headerBackground = "white"
-      if (heading !== undefined) {
-        if (bootstrap_enabled) {
-          headerBackground = "#e0ffe0";
-        }
-        tableBody += '<h4 style="background-color:' + headerBackground +
-          ';color:black;margin:0">' + heading + '</h4>';
-      }
-      if (obj === null) {
-        return tableBody;
-      }
-      if (bootstrap_enabled) {
-       tableBody += '<table class="table table-striped table-bordered">\n<tbody>\n';
-      } else {
-        tableBody += '<table style="background-color:white;color:black;border-collapse:collapse">\n';
-      }
-      $.each(obj, function(k, v) {
-        if (bootstrap_enabled) {
-          tableBody += '<tr><td>' + k + '</td><td>';
-        } else {
-          tableBody += '<tr style="background-color:white;color:black;border:1px solid black">'
-                    +  '<td style="background-color:white;color:black;border:1px solid black">'
-                    + k + '</td><td>';
-        }
-        if (typeof v !== "object") {
-          tableBody += v;
-        } else {
-          tableBody += makeJSONTable(v);
-        }
-      });
-      tableBody += '</td></tr>\n</tbody>\n</table>';
-      return tableBody;
     }
 
 });
