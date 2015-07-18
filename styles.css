@@ -84,7 +84,8 @@ body {
 	display: none;
 }
 
-.auto-check {
+.ui-autocomplete {
+	text-align: left;
 }
 
 .start-div {

@@ -7,14 +7,72 @@ $(document).ready(function() {
     // getAutoComplete('Dela');
     // wikiRandom();
 
+    $( ".search-box" ).autocomplete({
+        delay: 500,
+        diabled: true,
+        minLength: 2,
+        source: function( request, response ) {
+            /* See https://www.mediawiki.org/wiki/API:Opensearch */
+            $.ajax({
+              url: "https://en.wikipedia.org/w/api.php?" + jQuery.param({
+                  "action": "opensearch",
+                  "search": request.term,
+                  "limit": 7,
+                  "format": "json",
+              }),
+              dataType: "jsonp",
+              type: "POST",
+            })
+            .done(function(data, textStatus, jqXHR) {
+                console.log("HTTP Request Succeeded: " + jqXHR.status);
+                // console.log(data);
+                /* An array. is returned  All but the first element are arrays
+                data[0] = search string
+                data[1][i] = autocompletion
+                data[2][i] = snippet
+                data[3][i] = canonical url
+                */
+                response(data[1]);
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+                console.log("HTTP Request Failed");
+                console.log(jqXHR);
+                console.log(errorThrown);
+            })
+            .always(function() {
+                /* ... */
+            });
+        }
+    });
+
     $( '.auto-check' ).prop('checked', false);
+
+    $( '.auto-check').click(function(event) {
+        if ($(this).attr('checked')) {
+            $( '.search-box' ).autocomplete( 'enable' );
+        } else {
+            $( '.search-box' ).autocomplete( 'disable' );
+        }
+    })
+
+    $( '.search-box' ).keypress(function(event) {
+        if ( event.which === 13 ) {
+            var val = $( '.search-box' ).val();
+            if (val.length === 0 ) {
+                return;
+            } else {
+                searchWikipedia(val);
+            }
+        }
+    });
+
+    /* Event handlers */
 
     $( '.text-thing' ).click(function() { transitionToSearch(); });
     $( '.random-entry' ).click(function() { wikiRandom(); });
     $( '.x-clear' ).click(function() { transitionToStart(); });
 
-    /* Use 'on' with an existing page element to bind events to selected
-    elements that are dynmically added later. */
+        /* Use 'on' with an existing page element to bind events to selected elements that are dynmically added later. */
 
     $( '.results-div' ).on('mouseover', '.search-result', function(event) {
         $(this).removeClass('no-border').addClass('left-border');
@@ -28,40 +86,10 @@ $(document).ready(function() {
           getPage( $(this).attr('id'));
     });
 
-    $( '.search-box' ).keypress(function(event) {
-        if ( event.which === 13 ) {
-            var val = $( '.search-box' ).val();
-            if (val.length === 0 ) {
-                return;
-            } else {
-                searchWikipedia(val);
-            }
-        }
-    });
-
-    $( "#autocomplete" ).autocomplete({
-        source: function( request, response ) {
-            response( getAutoComplete(request.term) );
-        }
-    });
-
-    $( '#autocomplete' ).keyup(function(event) {
-        if ($( '.auto-check' ).prop('checked')) {
-            var val = $( '#autocomplete ' ).val();
-            if (val.length >= 2) {
-                console.log(getAutoComplete(val));
-            }
-        }
-    });
+    /* View modifications */
 
     function transitionToSearch() {
-        /* Remove the random page option
-        Remove the handle of the magnifyng glass (visiblity)
-        Stretch the box to its final length
-        Add the x used to clear the box
-        Move the focus to the search box.
-        Add the autocompete checkbox
-        The example includes a funky animation for the x */
+        /* The example includes a funky animation for the x */
         $( '.top-space' ).height('200px');
         $( '.start-div' ).removeClass('shown').addClass('hidden');
         $( '.search-handle' ).removeClass('shown').addClass('hidden');
@@ -73,12 +101,7 @@ $(document).ready(function() {
     }
 
     function transitionToStart() {
-        /*  Remove the automcomplete option,
-        Clear and hide the search box
-        Hide and disable the x
-        Shrink the text-thing to a circle
-        Show the handle of the magnifying glass
-        The example includes a funky animation for the x \(clear) */
+        /*  The example includes a funky animation for the x */
         $( '.results-div' ).html('');
         $( '.top-space' ).height('200px');
         $( '.search-box' ).val('');
@@ -91,9 +114,25 @@ $(document).ready(function() {
         });
     }
 
+    function writeResults(data) {
+        $( '.top-space' ).height('20px');
+        $( '.results-div' ).html('');
+        $( '.results-div' ).append(data.query.search
+            .reduce(function(a,b) { return a + writeDiv(b); }, ''));
+    }
+
+    function writeDiv(item) {
+        return '<div class="search-result no-border" id="' +
+            item.title + '">\n' +
+            '<h4>' + item.title + '</h4>\n' +
+            '<p>' + stripHtml(item.snippet) + '</p>\n' +
+            '</div>';
+    }
+
     /* ajax calls */
 
     function searchWikipedia(searchStr) {
+        /* Perform the search, return at most 10 results, and call writeDivs to display them */
         $.ajax({
             url: "https://en.wikipedia.org/w/api.php?" + jQuery.param({
                 "action": "query",
@@ -108,7 +147,7 @@ $(document).ready(function() {
         })
         .done(function(data, textStatus, jqXHR) {
             console.log("HTTP Request Succeeded: " + jqXHR.status);
-            console.log(data);
+            // console.log(data);
             // $('.json').append(makeJSONTable(data, "Results of Wikipedia search"));
             if (data.query.search.length === 0) {
                 alert("No results found")
@@ -126,26 +165,9 @@ $(document).ready(function() {
           });
     }
 
-    function writeResults(data) {
-        $( '.top-space' ).height('20px');
-        $( '.results-div' ).html('');
-        $( '.results-div' ).append(data.query.search
-            .reduce(function(a,b) { return a + writeDiv(b); }, ''));
-    }
-
-      function writeDiv(item) {
-          return '<div class="search-result no-border" id="' + item.title + '">\n' +
-              '<h4>' + item.title + '</h4>\n' +
-              '<p>' + stripHtml(item.snippet) + '</p>\n' +
-              '</div>';
-      }
-
-    function stripHtml(str) {
-      return $('<div/>').html(str).text();
-    }
-
     function getPage(title) {
-      $.ajax({
+        /* Find the pageid, then call openPage to find the url and open it in a new window */
+        $.ajax({
         url: "https://en.wikipedia.org/w/api.php?" + jQuery.param({
             "action": "query",
             "list": "pageswithprop",
@@ -155,33 +177,33 @@ $(document).ready(function() {
             "pwppropname": title,
             "titles": title,
             "format": "json",
-        }),
-        dataType: "jsonp",
-        type: "POST",
-      })
-      .done(function(data, textStatus, jqXHR) {
-          console.log("HTTP Request Succeeded: " + jqXHR.status);
-          console.log(data);
-          if (data.query.pageids.length > 1) {
-            console.log("Pageids for ", title, " = ", data.query.pageids);
-          }
-          if (data.query.pageids.length > 0) {
-            openPage(data.query.pageids[0]);
-          }
-          // $('#json').append(makeJSONTable(data, "Results of getPage"));
-      })
-      .fail(function(jqXHR, textStatus, errorThrown) {
-          console.log("HTTP Request Failed");
-          console.log(jqXHR);
-          console.log(errorThrown);
-      })
-      .always(function() {
-          /* ... */
-      });
-
+            }),
+            dataType: "jsonp",
+            type: "POST",
+        })
+        .done(function(data, textStatus, jqXHR) {
+            console.log("HTTP Request Succeeded: " + jqXHR.status);
+            console.log(data);
+            if (data.query.pageids.length > 1) {
+                console.log("Pageids for ", title, " = ", data.query.pageids);
+            }
+            if (data.query.pageids.length > 0) {
+                openPage(data.query.pageids[0]);
+            }
+            // $('#json').append(makeJSONTable(data, "Results of getPage"));
+        })
+        .fail(function(jqXHR, textStatus, errorThrown) {
+            console.log("HTTP Request Failed");
+            console.log(jqXHR);
+            console.log(errorThrown);
+        })
+        .always(function() {
+            /* ... */
+        });
     }
 
     function openPage(pageid) {
+        /* Find the url of the page, then open it in a new wwindow */
        $.ajax({
           url: "https://en.wikipedia.org/w/api.php?" + jQuery.param({
               "action": "query",
@@ -198,7 +220,6 @@ $(document).ready(function() {
             console.log(data);
             // $('#json').append(makeJSONTable(data, "Results of openPage"));
             var url = data.query.pages[pageid].canonicalurl
-            console.log(url);
             window.open(url);
         })
         .fail(function(jqXHR, textStatus, errorThrown) {
@@ -211,41 +232,8 @@ $(document).ready(function() {
         });
     }
 
-    function getAutoComplete(searchStr) {
-        /* See https://www.mediawiki.org/wiki/API:Opensearch */
-        $.ajax({
-          url: "https://en.wikipedia.org/w/api.php?" + jQuery.param({
-              "action": "opensearch",
-              "search": searchStr,
-              "limit": 7,
-              "format": "json",
-          }),
-          dataType: "jsonp",
-          type: "POST",
-        })
-        .done(function(data, textStatus, jqXHR) {
-            console.log("HTTP Request Succeeded: " + jqXHR.status);
-            console.log(data);
-            /* An array. is returned  All but the first element are arrays
-            data[0] = search string
-            data[1][i] = autocompletion
-            data[2][i] = snippet
-            data[3][i] = canonical url
-            */
-            return [data[1], data[3]];
-        })
-        .fail(function(jqXHR, textStatus, errorThrown) {
-            console.log("HTTP Request Failed");
-            console.log(jqXHR);
-            console.log(errorThrown);
-        })
-        .always(function() {
-            /* ... */
-        });
-
-    }
-
     function wikiRandom() {
+        /* Find a random page, then call openPage to open it in a new window */
         $.ajax({
           url: "https://en.wikipedia.org/w/api.php?" + jQuery.param({
               "action": "query",
@@ -274,6 +262,10 @@ $(document).ready(function() {
     }
 
     /* Utility functions */
+
+    function stripHtml(str) {
+      return $('<div/>').html(str).text();
+    }
 
     function makeJSONTable(obj, heading) {
       /* This returns HTML for a nested table of JSON data.
