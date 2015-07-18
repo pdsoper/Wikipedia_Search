@@ -7,6 +7,16 @@ $(document).ready(function() {
     // getAutoComplete('Dela');
     // wikiRandom();
 
+    $( '#search-form' ).submit(function(event) {
+        var val = $( '.search-box' ).val();
+        if (val.length === 0 ) {
+            return;
+        } else {
+            $( ".search-box" ).autocomplete( 'close' );
+            searchWikipedia(val);
+        }
+    });
+
     $( ".search-box" ).autocomplete({
         delay: 300,
         diabled: false,
@@ -40,17 +50,6 @@ $(document).ready(function() {
             .always(function() {
                 /* ... */
             });
-        }
-    });
-
-    $( '.search-box' ).keypress(function(event) {
-        if ( event.which === 13 ) {
-            var val = $( '.search-box' ).val();
-            if (val.length === 0 ) {
-                return;
-            } else {
-                searchWikipedia(val);
-            }
         }
     });
 
