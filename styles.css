@@ -6,6 +6,10 @@ body {
 	background-color: #092B40;
 }
 
+.top-space {
+	height: 200px;
+}
+
 .search-div {
 	text-align: center;
 }
@@ -74,11 +78,10 @@ body {
 }
 
 .check-div {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 1.1em;
 	color: white;
 	display: none;
-}
-
-.auto-check {
 }
 
 .start-div {
@@ -99,6 +102,30 @@ body {
 	padding: 5px 10px 5px 10px;
 	border: 1px solid gray;
 	border-radius: 10px;
+}
+
+.results-div {
+	margin: auto;
+	width: 75%;
+}
+
+.search-result {
+	background-color: white;
+	color: black;
+	padding: 1px 10px 5px 10px;
+	margin: 5px;
+}
+
+.search-result:hover {
+	cursor: pointer;
+}
+
+.no-border {
+	border-left: 5px solid #092B40;
+}
+
+.left-border {
+	border-left: 5px solid #D96F32;
 }
 
 .hidden {
