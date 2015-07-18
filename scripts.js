@@ -8,52 +8,40 @@ $(document).ready(function() {
     // wikiRandom();
 
     $( ".search-box" ).autocomplete({
-        delay: 500,
-        diabled: true,
+        delay: 300,
+        diabled: false,
         minLength: 2,
         source: function( request, response ) {
-            /* See https://www.mediawiki.org/wiki/API:Opensearch */
             $.ajax({
-              url: "https://en.wikipedia.org/w/api.php?" + jQuery.param({
-                  "action": "opensearch",
-                  "search": request.term,
-                  "limit": 7,
-                  "format": "json",
-              }),
-              dataType: "jsonp",
-              type: "POST",
+                /* See https://www.mediawiki.org/wiki/API:Opensearch */
+                url: "https://en.wikipedia.org/w/api.php?" + jQuery.param({
+                    "action": "opensearch",
+                    "search": request.term,
+                    "limit": 7,
+                    "format": "json",
+                }),
+                dataType: "jsonp",
+                type: "POST",
             })
             .done(function(data, textStatus, jqXHR) {
                 console.log("HTTP Request Succeeded: " + jqXHR.status);
                 // console.log(data);
-                /* An array. is returned  All but the first element are arrays
-                data[0] = search string
-                data[1][i] = autocompletion
-                data[2][i] = snippet
-                data[3][i] = canonical url
-                */
+                /* An array is returned  All but the first element are arrays.
+                data[0] = search string, data[1][i] = autocompletion,
+                data[2][i] = snippet, data[3][i] = canonical url */
                 response(data[1]);
             })
             .fail(function(jqXHR, textStatus, errorThrown) {
                 console.log("HTTP Request Failed");
                 console.log(jqXHR);
                 console.log(errorThrown);
+                response([]);
             })
             .always(function() {
                 /* ... */
             });
         }
     });
-
-    $( '.auto-check' ).prop('checked', false);
-
-    $( '.auto-check').click(function(event) {
-        if ($(this).attr('checked')) {
-            $( '.search-box' ).autocomplete( 'enable' );
-        } else {
-            $( '.search-box' ).autocomplete( 'disable' );
-        }
-    })
 
     $( '.search-box' ).keypress(function(event) {
         if ( event.which === 13 ) {
@@ -90,8 +78,8 @@ $(document).ready(function() {
 
     function transitionToSearch() {
         /* The example includes a funky animation for the x */
-        $( '.top-space' ).height('200px');
-        $( '.start-div' ).removeClass('shown').addClass('hidden');
+        $( '.top-space' ).removeClass('short-top').addClass('tall-top');
+        $( '.start-div' ).removeClass('disp-block').addClass('disp-none');
         $( '.search-handle' ).removeClass('shown').addClass('hidden');
         $( '.text-thing' ).animate( { width: 300 }, 500, function() {
           $( '.x-clear' ).removeClass('hidden').addClass('shown');
@@ -103,19 +91,19 @@ $(document).ready(function() {
     function transitionToStart() {
         /*  The example includes a funky animation for the x */
         $( '.results-div' ).html('');
-        $( '.top-space' ).height('200px');
+        $( '.top-space' ).removeClass('short-top').addClass('tall-top');
         $( '.search-box' ).val('');
         $( '.search-box' ).removeClass('shown').addClass('hidden');
         $( '.check-div' ).removeClass('disp-block').addClass('disp-none');
         $( '.x-clear' ).removeClass('shown').addClass('hidden');
         $( '.text-thing' ).animate( { width: 40 }, 500, function() {
           $( '.search-handle' ).removeClass('hidden').addClass('shown');
-          $( '.start-div' ).removeClass('hidden').addClass('shown');
+          $( '.start-div' ).removeClass('disp-none').addClass('disp-block');
         });
     }
 
     function writeResults(data) {
-        $( '.top-space' ).height('20px');
+        $( '.top-space' ).removeClass('tall-top').addClass('short-top');
         $( '.results-div' ).html('');
         $( '.results-div' ).append(data.query.search
             .reduce(function(a,b) { return a + writeDiv(b); }, ''));
@@ -183,7 +171,7 @@ $(document).ready(function() {
         })
         .done(function(data, textStatus, jqXHR) {
             console.log("HTTP Request Succeeded: " + jqXHR.status);
-            console.log(data);
+            // console.log(data);
             if (data.query.pageids.length > 1) {
                 console.log("Pageids for ", title, " = ", data.query.pageids);
             }
@@ -217,7 +205,7 @@ $(document).ready(function() {
         })
         .done(function(data, textStatus, jqXHR) {
             console.log("HTTP Request Succeeded: " + jqXHR.status);
-            console.log(data);
+            // console.log(data);
             // $('#json').append(makeJSONTable(data, "Results of openPage"));
             var url = data.query.pages[pageid].canonicalurl
             window.open(url);

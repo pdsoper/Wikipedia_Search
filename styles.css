@@ -6,8 +6,12 @@ body {
 	background-color: #092B40;
 }
 
-.top-space {
+.tall-top {
 	height: 200px;
+}
+
+.short-top {
+	height: 20px;
 }
 
 .search-div {
@@ -36,7 +40,7 @@ body {
 	padding: 0;
 	font-weight: bold;
 	font-size: 1.4em;
-  visibility: hidden;
+    visibility: hidden;
 	z-index: 1;
 }
 
@@ -75,13 +79,6 @@ body {
 	background-color: transparent;
 	color: white;
 	visibility: hidden;
-}
-
-.check-div {
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 1.1em;
-	color: white;
-	display: none;
 }
 
 .ui-autocomplete {
