@@ -10,9 +10,8 @@ $(document).ready(function() {
     /* Event handlers */
 
     $( ".search-box" ).autocomplete({
-        delay: 300,
         diabled: false,
-        minLength: 2,
+        minLength: 1,
         select: function(event, ui) {
             searchWikipedia(ui.item.label);
         },
@@ -22,7 +21,7 @@ $(document).ready(function() {
                 url: "https://en.wikipedia.org/w/api.php?" + jQuery.param({
                     "action": "opensearch",
                     "search": request.term,
-                    "limit": 7,
+                    "limit": 10,
                     "format": "json",
                 }),
                 dataType: "jsonp",
@@ -40,6 +39,7 @@ $(document).ready(function() {
                 console.log("HTTP Request Failed");
                 console.log(jqXHR);
                 console.log(errorThrown);
+                ajaxActive = false;
                 response([]);
             })
             .always(function() {
@@ -58,7 +58,10 @@ $(document).ready(function() {
         }
     });
 
-    $( '.text-thing' ).click(function() { transitionToSearch(); });
+    $( '.text-thing' ).click(function() {
+        if ( $( '.search-result').length === 0)
+            transitionToSearch();
+        });
     $( '.random-entry' ).click(function() { wikiRandom(); });
     $( '.x-clear' ).click(function() { transitionToStart(); });
 
