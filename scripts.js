@@ -50,16 +50,15 @@ $(document).ready(function() {
 
     $( '#search-form' ).submit(function(event) {
         var val = $( '.search-box' ).val();
-        if (val.length === 0 ) {
-            return;
-        } else {
+        if (val.length > 0 ) {
             $( ".search-box" ).autocomplete( 'close' );
             searchWikipedia(val);
         }
+        return false;
     });
 
     $( '.text-thing' ).click(function() {
-        if ( $( '.search-result').length === 0)
+        if ( $( '.search-result' ).length === 0)
             transitionToSearch();
         });
     $( '.random-entry' ).click(function() { wikiRandom(); });
